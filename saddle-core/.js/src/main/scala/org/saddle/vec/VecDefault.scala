@@ -26,13 +26,19 @@ import org.saddle.order._
 import org.saddle.FillMethod
 import org.saddle.FillForward
 import org.saddle.FillBackward
+import com.raquo.ew.JsArray
 
 class VecDefault[@spec(Boolean, Int, Long, Double) T](
-    values: Array[T],
+    valuesIn: JsArray[T],
     val scalarTag: ST[T]
 ) extends NumericOps[Vec[T]]
     with Vec[T] { self =>
   implicit private[this] def st: ST[T] = scalarTag
+
+  lazy val values: JsArray[T] = {
+    val tmp = scalajs.js.Array(valuesIn: _*)
+    JsArray.from(tmp)
+  }
 
   /** Set to true when the vec is shifted over the backing array false iff the
     * backing array is a contiguous sequence of the elements of this Vec false
@@ -61,7 +67,7 @@ class VecDefault[@spec(Boolean, Int, Long, Double) T](
   def toArray: Array[T] = {
     // need to check if we're a view on an array
     if (!needsCopy)
-      values
+      values.asScalaJs.toArray
     else {
       val buf = new Array[T](length)
       val n = length
@@ -251,8 +257,8 @@ class VecDefault[@spec(Boolean, Int, Long, Double) T](
     val e = math.min(until, self.length)
 
     if (e <= b) Vec.empty
-    else
-      new VecDefault(values, scalarTag) {
+    else      
+      new VecDefault(values.asScalaJs.toArray, scalarTag) {
         private val ub = math.min(self.length, e)
 
         override def length =
@@ -291,7 +297,7 @@ class VecDefault[@spec(Boolean, Int, Long, Double) T](
     import org.saddle._
     if (offsets.length == 0) Vec.empty
     else
-      new VecDefault(values, scalarTag) {
+      new VecDefault(values.asScalaJs.toArray, scalarTag) {
 
         override def length = offsets.length
 
@@ -330,7 +336,7 @@ class VecDefault[@spec(Boolean, Int, Long, Double) T](
     val b = -m
     val e = self.length - m
 
-    new VecDefault(values, scalarTag) {
+    new VecDefault(values.asScalaJs.toArray, scalarTag) {
       override def length = self.length
 
       override def raw(i: Int): T = {
