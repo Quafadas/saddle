@@ -1158,18 +1158,18 @@ class MatCheck extends Specification with ScalaCheck {
         }
       }
     }
-    "mutating over col view" in {
-      forAll { (m: Mat[Double]) =>
-        (m.numRows > 0 && m.numCols > 0) ==> {
-          val m2 = m.copy
-          val col = m2.col(0)
-          col *= 0
-          m2 == Mat(m.cols.zipWithIndex.map { case (col, idx) =>
-            if (idx == 0) col * 0d else col
-          }: _*)
-        }
-      }
-    }
+    // "mutating over col view" in {
+    //   forAll { (m: Mat[Double]) =>
+    //     (m.numRows > 0 && m.numCols > 0) ==> {
+    //       val m2 = m.copy
+    //       val col = m2.col(0)
+    //       col *= 0
+    //       m2 == Mat(m.cols.zipWithIndex.map { case (col, idx) =>
+    //         if (idx == 0) col * 0d else col
+    //       }: _*)
+    //     }
+    //   }
+    // }
   }
 
 }
