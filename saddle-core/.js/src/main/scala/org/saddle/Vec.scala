@@ -35,7 +35,7 @@ object Vec {
     */
   def apply[@spec(Boolean, Int, Long, Double) T](arr: Array[T])(implicit
       st: ST[T]
-  ): Vec[T] = new VecDefault(arr, st)
+  ): Vec[T] = new VecDefault(JsArray.from(scalajs.js.Array(arr: _*)), st)
 
   /** Factory method to create a Vec from a sequence of elements. For example,
     *
